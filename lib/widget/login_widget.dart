@@ -1,6 +1,5 @@
 // ignore_for_file: await_only_futures, use_build_context_synchronously, deprecated_member_use
 
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -265,6 +264,7 @@ class _TextfaildState extends State<Textfaild> {
                     : () async {
                         final email = emailController.text.trim();
                         final password = passwordController.text.trim();
+
                         if (!_formKey.currentState!.validate()) {
                           return;
                         }
@@ -287,15 +287,18 @@ class _TextfaildState extends State<Textfaild> {
                             );
                           } else {
                             await FirebaseAuth.instance.signOut();
-                            AwesomeDialog(
-                              context: context,
-                              dialogType: DialogType.warning,
-                              animType: AnimType.rightSlide,
-                              title: 'تنبيه',
-                              desc:
+
+                            if (!mounted) return;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
                                   'برجاء تفعيل بريدك الإلكتروني أولاً. تم إرسال رابط التحقق سابقاً (تأكد من خانة الـ Spam)',
-                              btnOkOnPress: () {},
-                            ).show();
+                                ),
+                                backgroundColor: Colors.orange,
+                                duration: Duration(seconds: 4),
+                              ),
+                            );
                           }
                         } on FirebaseAuthException catch (e) {
                           if (!mounted) return;
@@ -317,15 +320,13 @@ class _TextfaildState extends State<Textfaild> {
                             errorMessage =
                                 'تم إجراء محاولات كثيرة، حاول مرة أخرى لاحقاً';
                           }
-
-                          AwesomeDialog(
-                            context: context,
-                            dialogType: DialogType.error,
-                            animType: AnimType.rightSlide,
-                            title: 'خطأ في تسجيل الدخول',
-                            desc: errorMessage,
-                            btnOkOnPress: () {},
-                          ).show();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(errorMessage),
+                              backgroundColor: Colors.red,
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
                         } finally {
                           if (mounted) {
                             setState(() {
@@ -334,14 +335,6 @@ class _TextfaildState extends State<Textfaild> {
                           }
                         }
                       },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xffD30000),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(R.radius(context, 12)),
-                  ),
-                ),
                 child: isLoading
                     ? SizedBox(
                         width: R.w(context, 24),
@@ -365,7 +358,6 @@ class _TextfaildState extends State<Textfaild> {
             Row(
               children: [
                 Expanded(child: Divider(color: Colors.grey.shade300)),
-
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: R.w(context, 15)),
                   child: Text(

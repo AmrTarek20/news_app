@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -243,9 +242,11 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                   : () async {
                       final email = emailController.text.trim();
                       final password = passwordController.text.trim();
+
                       if (!_formKey.currentState!.validate()) {
                         return;
                       }
+
                       if (!agreeToTerms) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -257,9 +258,11 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         );
                         return;
                       }
+
                       setState(() {
                         isLoading = true;
                       });
+
                       try {
                         UserCredential userCredential = await FirebaseAuth
                             .instance
@@ -267,32 +270,43 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                               email: email,
                               password: password,
                             );
+
                         await userCredential.user?.updateDisplayName(
                           nameController.text.trim(),
                         );
+
                         await userCredential.user?.sendEmailVerification();
+
                         if (!mounted) return;
+
                         final registeredEmail = emailController.text.trim();
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.success,
-                          animType: AnimType.rightSlide,
-                          title: 'نجاح',
-                          desc:
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
                               'تم إنشاء الحساب وإرسال رابط التحقق إلى بريدك الإلكتروني (تأكد من خانة الـ Spam)',
-                          btnOkOnPress: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    LoginAuth(prefilledEmail: registeredEmail),
-                              ),
-                              (route) => false,
-                            );
-                          },
-                        ).show();
+                            ),
+                            backgroundColor: Colors.green,
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+
+                        Future.delayed(const Duration(seconds: 3), () {
+                          if (!mounted) return;
+
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  LoginAuth(prefilledEmail: registeredEmail),
+                            ),
+                            (route) => false,
+                          );
+                        });
                       } on FirebaseAuthException catch (e) {
                         if (!mounted) return;
+
                         String errorMessage = 'حدث خطأ ما، حاول مرة أخرى';
+
                         if (e.code == 'email-already-in-use') {
                           errorMessage = 'هذا البريد الإلكتروني مستخدم من قبل';
                         } else if (e.code == 'weak-password') {
@@ -300,14 +314,14 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         } else if (e.code == 'invalid-email') {
                           errorMessage = 'صيغة البريد الإلكتروني غير صحيحة';
                         }
-                        AwesomeDialog(
-                          context: context,
-                          dialogType: DialogType.error,
-                          animType: AnimType.rightSlide,
-                          title: 'رسالة خطأ',
-                          desc: errorMessage,
-                          btnOkOnPress: () {},
-                        ).show();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(errorMessage),
+                            backgroundColor: Colors.red,
+                            duration: const Duration(seconds: 3),
+                          ),
+                        );
                       } finally {
                         if (mounted) {
                           setState(() {
