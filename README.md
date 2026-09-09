@@ -48,6 +48,22 @@
 
 ---
 
+## صور من التطبيق (App Screenshots)
+
+<p align="center">
+  <img width="299" height="649" alt="Image" src="https://github.com/user-attachments/assets/0d446b06-3dfc-4e5d-8125-fa874a2396a6" />
+  <img width="297" height="649" alt="Image" src="https://github.com/user-attachments/assets/856185c0-6c02-4149-86eb-611220efd8a6" />
+  <img width="299" height="647" alt="Image" src="https://github.com/user-attachments/assets/c73be857-f937-4750-a087-4a34deffd5fb" />
+  <img width="492" height="1073" alt="Image" src="https://github.com/user-attachments/assets/44f094fd-b48f-494a-8130-43552eac678f" />
+  <img width="301" height="649" alt="Image" src="https://github.com/user-attachments/assets/02170d8e-79d7-4d60-8b69-3417716cdf1e" />
+  <img width="297" height="645" alt="Image" src="https://github.com/user-attachments/assets/7972add6-ccb4-41ab-9763-78020c095aed" />
+  <img width="300" height="648" alt="Image" src="https://github.com/user-attachments/assets/d91bc97d-b274-4929-96fd-13747558b826" />
+  <img width="301" height="650" alt="Image" src="https://github.com/user-attachments/assets/a04225bc-e90b-4854-a2bc-cf3516a3f279" />
+  <img width="298" height="646" alt="Image" src="https://github.com/user-attachments/assets/25eab5d4-6dc1-4983-bf7d-2d628fed0a08" />
+</p>
+
+---
+
 ## شكل وتنظيم المشروع (Project Structure)
 ```text
 lib/
