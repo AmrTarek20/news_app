@@ -31,30 +31,22 @@ class _SignUpWidgetState extends State<SignUpWidget> {
 
   Future<UserCredential?> signInWithGoogle(BuildContext context) async {
     try {
-      final googleSignIn = GoogleSignIn.instance;
-      final GoogleSignInAccount googleUser = await googleSignIn.authenticate();
-      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
-      final clientAuth = await googleUser.authorizationClient.authorizeScopes([
-        'email',
-        'profile',
-      ]);
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        return null;
+      }
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
-        accessToken: clientAuth.accessToken,
       );
 
       return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
-      // ignore: avoid_print
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('خطأ أثناء تسجيل الدخول بجوجل: ${e.toString()}'),
-            backgroundColor: const Color(0xffD30000),
-          ),
-        );
-      }
+      debugPrint('خطأ في تسجيل الدخول بجوجل: $e');
       return null;
     }
   }

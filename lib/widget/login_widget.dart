@@ -9,7 +9,6 @@ import 'package:news_app/model/responsive.dart';
 import 'package:news_app/page/main_screens.dart';
 import 'package:news_app/model/custom_text_form_faild.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Textfaild extends StatefulWidget {
   final String? prefilledEmail;
@@ -31,35 +30,22 @@ class _TextfaildState extends State<Textfaild> {
 
   Future<UserCredential?> signInWithGoogle(BuildContext context) async {
     try {
-      if (kIsWeb) {
-        GoogleAuthProvider authProvider = GoogleAuthProvider();
-        return await FirebaseAuth.instance.signInWithPopup(authProvider);
-      } else {
-        final googleSignIn = GoogleSignIn.instance;
-        final GoogleSignInAccount googleUser = await googleSignIn
-            .authenticate();
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final clientAuth = await googleUser.authorizationClient.authorizeScopes(
-          ['email', 'profile'],
-        );
-
-        final credential = GoogleAuthProvider.credential(
-          idToken: googleAuth.idToken,
-          accessToken: clientAuth.accessToken,
-        );
-
-        return await FirebaseAuth.instance.signInWithCredential(credential);
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        return null;
       }
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      return await FirebaseAuth.instance.signInWithCredential(credential);
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('خطأ أثناء تسجيل الدخول بجوجل: ${e.toString()}'),
-            backgroundColor: const Color(0xffD30000),
-          ),
-        );
-      }
+      debugPrint('خطأ في تسجيل الدخول بجوجل: $e');
       return null;
     }
   }
